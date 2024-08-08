@@ -1,28 +1,29 @@
 <?php
-$servername = "ypurlocalhost"; // don't foorget to change it 
-$username = "yourusrenam";
-$password = "yourpassword";
-$dbname = "yourdbname";
+$servername = "ypurlocalhost"; // Update with your server name
+$username = "yourusername"; // Update with your username
+$password = "yourpassword"; // Update with your password
+$dbname = "yourdbname"; // Update with your database name
 
-// إنشاء اتصال بقاعدة البيانات
+// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// التحقق من الاتصال
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $direction = $_POST['direction'];
+// Get the latest direction
+$sql = "SELECT direction FROM moves ORDER BY timestamp DESC LIMIT 1";
+$result = $conn->query($sql);
 
-    // إدخال البيانات في قاعدة البيانات
-    $sql = "INSERT INTO moves (direction) VALUES ('$direction')";
-    if ($conn->query($sql) === TRUE) {
-        echo $direction ; 
-    } else {
-        echo json_encode(["status" => "error", "message" => $conn->error]);
-    }
+if ($result->num_rows > 0) {
+    // Output the latest direction
+    $row = $result->fetch_assoc();
+    echo $row['direction'];
+} else {
+    echo "No data";
 }
 
 $conn->close();
 ?>
+"
